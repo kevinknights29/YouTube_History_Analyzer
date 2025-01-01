@@ -1,0 +1,22 @@
+[project]
+name = "youtube-history-analyzer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "beautifulsoup4>=4.12.3",
+    "pandas>=2.2.3",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/youtube_history_analyzer"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.4",
+]
