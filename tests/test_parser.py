@@ -108,12 +108,19 @@ def test_parse_history(parser):
 
     assert isinstance(df, pd.DataFrame)
     assert len(df) == 1  # Should have one entry from our sample
-    assert list(df.columns) == ["video", "video_url", "channel", "channel_url", "date"]
+    assert list(df.columns) == [
+        "video",
+        "video_url",
+        "channel",
+        "channel_url",
+        "date",
+        "category",
+    ]
 
 
 def test_parse_history_with_real_file():
     """Test with the actual watch-history.html file"""
-    parser = YouTubeHistoryParser("data/watch-history.html")
+    parser = YouTubeHistoryParser("data/input/watch-history.html")
     df = parser.parse_history()
 
     assert isinstance(df, pd.DataFrame)
