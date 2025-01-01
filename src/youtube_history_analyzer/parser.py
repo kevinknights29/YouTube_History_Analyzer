@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime
 import logging
 from typing import Dict
+from .classifier import TopicVideoClassifier
 
 # Configure logging
 logging.basicConfig(
@@ -15,9 +16,12 @@ logger = logging.getLogger(__name__)
 class YouTubeHistoryParser:
     """Parser for YouTube watch history HTML files exported from Google Takeout."""
 
-    def __init__(self, file_path: str | Path):
+    def __init__(self, file_path: str | Path, output_dir: str | Path = "data/output"):
         self.file_path = Path(file_path)
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(exist_ok=True)
         self.soup = None
+        self.classifier = TopicVideoClassifier()
 
     def _load_html(self) -> None:
         """Load and parse HTML file using BeautifulSoup."""
@@ -113,4 +117,17 @@ class YouTubeHistoryParser:
                 columns=["video", "video_url", "channel", "channel_url", "date"]
             )
 
-        return pd.DataFrame(entries)
+        df = pd.DataFrame(entries)
+
+        if not df.empty:
+            # Get topic-based categories
+            classification = self.classifier.get_video_categories(df["video"].tolist())
+            df["category"] = classification["categories"]
+
+            # Generate and save topic visualization
+            self.classifier.visualize_topics(self.output_dir)
+
+            # Store topic keywords as metadata
+            self.topic_keywords = classification["topic_keywords"]
+
+        return df
